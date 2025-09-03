@@ -1,3 +1,4 @@
+// index.js - FIXED VERSION FOR RAILWAY
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
@@ -6,6 +7,8 @@ const { createSchoolsTable } = require('./config/database');
 const schoolRoutes = require('./routes/schoolRoutes');
 
 const app = express();
+
+// IMPORTANT: Railway assigns port dynamically - don't hardcode it
 const PORT = process.env.PORT || 3000;
 
 // Middleware
@@ -21,7 +24,9 @@ app.get('/health', (req, res) => {
   res.status(200).json({
     success: true,
     message: 'School Management API is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    port: PORT,
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
@@ -38,7 +43,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// Handle 404 routes - FIXED VERSION
+// Handle 404 routes
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -60,16 +65,20 @@ app.use((err, req, res, next) => {
 const startServer = async () => {
   try {
     console.log('🔧 Setting up database...');
+    console.log('Environment:', process.env.NODE_ENV);
+    console.log('Port:', PORT);
+    
     // Create database table
     await createSchoolsTable();
     console.log('✅ Database setup complete');
     
-    app.listen(PORT, () => {
+    // CRITICAL: Bind to 0.0.0.0 for Railway to work properly
+    app.listen(PORT, '0.0.0.0', () => {
       console.log('🚀 Server is running successfully!');
-      console.log(`📍 Server URL: http://localhost:${PORT}`);
-      console.log(`📍 Health check: http://localhost:${PORT}/health`);
-      console.log(`📚 Add School API: POST http://localhost:${PORT}/api/addSchool`);
-      console.log(`📋 List Schools API: GET http://localhost:${PORT}/api/listSchools`);
+      console.log(`📍 Server running on port: ${PORT}`);
+      console.log(`📍 Health check: /health`);
+      console.log(`📚 Add School API: POST /api/addSchool`);
+      console.log(`📋 List Schools API: GET /api/listSchools`);
       console.log('===============================================');
     });
   } catch (error) {
@@ -79,3 +88,14 @@ const startServer = async () => {
 };
 
 startServer();
+
+// Graceful shutdown handling
+process.on('SIGTERM', () => {
+  console.log('👋 SIGTERM received, shutting down gracefully');
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  console.log('👋 SIGINT received, shutting down gracefully');
+  process.exit(0);
+});
