@@ -1,0 +1,21 @@
+for this format data {
+
+  
+
+  "address": "Panchkula,Haryana",
+
+  "latitude": 30.7184,
+
+  "longitude": 76.8706
+
+} the error is {
+
+  "success": false,
+
+  "message": "Validation error",
+
+  "errors": [
+
+    "\"name\" is required"
+
+  ].but i want that error represent should like this { "success": false, "message": "Validation error", "errors": ["School name is required"] }
