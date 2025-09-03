@@ -19,3 +19,8 @@ for this format data {
     "\"name\" is required"
 
   ].but i want that error represent should like this { "success": false, "message": "Validation error", "errors": ["School name is required"] }
+
+
+  mysql://root:RstraWqEkTMiysPwTqEhseYSkSSzkqqO@shinkansen.proxy.rlwy.net:30500/railway
+
+  mysql.railway.internal
